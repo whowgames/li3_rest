@@ -8,6 +8,7 @@
 
 namespace li3_rest\net\http;
 
+use lithium\core\Libraries;
 use lithium\util\Inflector;
 use lithium\util\String;
 
@@ -70,31 +71,31 @@ class Resource extends \lithium\core\Object {
 	protected static $_types = array(
 		'index' => array(
 			'template' => '/{:resource}(.{:type:\w+})*',
-			'params' => array('http:method' => 'GET')
+			'params' => array('http:method' => 'GET', 'type' => 'json')
 		),
 		'show' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'GET')
+			'params' => array('http:method' => 'GET', 'type' => 'json')
 		),
 		'add' => array(
 			'template' => '/{:resource}/add',
-			'params' => array('http:method' => 'GET')
+			'params' => array('http:method' => 'GET', 'type' => 'json')
 		),
 		'create' => array(
 			'template' => '/{:resource}(.{:type:\w+})*',
-			'params' => array('http:method' => 'POST')
+			'params' => array('http:method' => 'POST', 'type' => 'json')
 		),
 		'edit' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}/edit',
-			'params' => array('http:method' => 'GET')
+			'params' => array('http:method' => 'GET', 'type' => 'json')
 		),
 		'update' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'PUT')
+			'params' => array('http:method' => 'PUT', 'type' => 'json')
 		),
 		'delete' => array(
 			'template' => '/{:resource}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*',
-			'params' => array('http:method' => 'DELETE')
+			'params' => array('http:method' => 'DELETE', 'type' => 'json')
 		)
 	);
 
@@ -110,13 +111,16 @@ class Resource extends \lithium\core\Object {
 		}
 		if (isset($config['types'])) {
 			static::$_types = $config['types'] + static::$_types;
-		}	
+		}
 	}
 
 	/**
 	 * Connect a resource to the `Router`.
 	 */
 	public static function connect($resource, $options = array()) {
+		$defaults = array('model' => (string) Libraries::locate('models', $resource));
+		$options += $defaults;
+
 		$resource = Inflector::tableize($resource);
 		$class = static::$_classes['route'];
 
@@ -132,6 +136,26 @@ class Resource extends \lithium\core\Object {
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action),
 			);
 			$routes[] = new $class($config);
+		}
+
+		$actionMethod = '/{:resource}/{:namespace}/{:method}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*';
+		foreach($options['model']::$apiMethods as $namespace => $methods) {
+			foreach($methods as $method) {
+				$config = array(
+					'template' => String::insert($actionMethod ,array(
+						'resource' => $resource,
+						'namespace' => $namespace,
+						'method' => $method)
+					),
+					'params' => array(
+						'http:method' => 'PUT',
+						'type' => 'json',
+						'controller' => $resource,
+						'action' => $method
+					)
+				);
+				$routes[] = new $class($config);
+			}
 		}
 
 		return $routes;
