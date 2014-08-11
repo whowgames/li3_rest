@@ -25,7 +25,7 @@ class Router extends \lithium\net\http\Router {
 
 		$routes = $class::connect($resource, $options);
 		foreach($routes as $route) {
-			static::$_configurations[] = $route;
+			static::$_configurations[self::$_scope][] = $route;
 		}
 	}
 
