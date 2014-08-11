@@ -1,3 +1,5 @@
+# Clone of daschl/li3_rest
+
 # li3_rest: RESTful support for the Lithium framework
 
 ## Introduction
