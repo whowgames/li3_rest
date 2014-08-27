@@ -148,7 +148,7 @@ class Resource extends \lithium\core\Object {
 						'method' => $method)
 					),
 					'params' => array(
-						'http:method' => 'PUT',
+						'http:method' => 'POST',
 						'type' => 'json',
 						'controller' => $resource,
 						'action' => $method
