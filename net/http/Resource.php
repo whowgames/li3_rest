@@ -118,10 +118,19 @@ class Resource extends \lithium\core\Object {
 	 * Connect a resource to the `Router`.
 	 */
 	public static function connect($resource, $options = array()) {
-		$defaults = array('model' => (string) Libraries::locate('models', $resource));
+		$defaults = array(
+			'model' => (string) Libraries::locate('models', $resource), 
+			'type' => 'json',
+			'pluralize' => true,
+		);
 		$options += $defaults;
 
-		$resource = Inflector::tableize($resource);
+		$resource = Inflector::underscore($resource);
+		
+		if($options['pluralize']) {
+			$resource = Inflector::pluralize($resource);
+		}
+
 		$class = static::$_classes['route'];
 
 		$types = static::$_types;
@@ -135,6 +144,11 @@ class Resource extends \lithium\core\Object {
 				'template' => String::insert($params['template'], array('resource' => $resource)),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action),
 			);
+
+			if($config['params']['type'] != $options['type']) {
+				$config['params']['type'] = $options['type'];
+			}
+
 			$routes[] = new $class($config);
 		}
 
@@ -142,14 +156,14 @@ class Resource extends \lithium\core\Object {
 		foreach($options['model']::$apiMethods as $namespace => $methods) {
 			foreach($methods as $method) {
 				$config = array(
-					'template' => String::insert($actionMethod ,array(
+					'template' => String::insert($actionMethod, array(
 						'resource' => $resource,
 						'namespace' => $namespace,
 						'method' => $method)
 					),
 					'params' => array(
 						'http:method' => 'POST',
-						'type' => 'json',
+						'type' => $options['type'],
 						'controller' => $resource,
 						'action' => $method
 					)
