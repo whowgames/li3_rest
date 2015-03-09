@@ -122,6 +122,7 @@ class Resource extends \lithium\core\Object {
 			'model' => (string) Libraries::locate('models', $resource), 
 			'type' => 'json',
 			'pluralize' => true,
+			'method' => 'POST',
 		);
 		$options += $defaults;
 
@@ -162,7 +163,7 @@ class Resource extends \lithium\core\Object {
 						'method' => $method)
 					),
 					'params' => array(
-						'http:method' => 'POST',
+						'http:method' => $options['method'],
 						'type' => $options['type'],
 						'controller' => $resource,
 						'action' => $method
