@@ -1,3 +1,6 @@
 {
-	"name": "daschl/li3_rest"
+	"name": "daschl/li3_rest",
+    "require": {
+        "composer/installers": "*"
+    }
 }
