@@ -1,5 +1,6 @@
 {
 	"name": "daschl/li3_rest",
+    "type": "lithium-library",
     "require": {
         "composer/installers": "*"
     }
