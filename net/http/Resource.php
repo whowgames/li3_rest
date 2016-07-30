@@ -10,23 +10,23 @@ namespace li3_rest\net\http;
 
 use lithium\core\Libraries;
 use lithium\util\Inflector;
-use lithium\util\String;
+use lithium\util\StringDeprecated;
 
 /**
  * The `Resource` class enables RESTful routing in Lithium.
- * 
- * The `Resource` class acts as a more high-level interface to the `Route` class 
+ *
+ * The `Resource` class acts as a more high-level interface to the `Route` class
  * and takes care of instantiating the appropriate routes for a given resource.
- * 
- * 
+ *
+ *
  * In your `routes.php` file you can connect a resource in its simplest form like this:
- * 
+ *
  * {{{
  * Router::resource('Posts');
  * }}}
- * 
+ *
  * This will automatically generate this CRUD routes for you (output similar to `li3 route`):
- * 
+ *
  * {{{
  * /posts(.{:type:\w+})*                               	    {"controller":"posts","action":"index"}
  * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*        	{"controller":"posts","action":"show"}
@@ -36,11 +36,11 @@ use lithium\util\String;
  * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"update"}
  * /posts/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*       	{"controller":"posts","action":"delete"}
  * }}}
- * 
- * This routes look complex in the first place, but they try to be as flexible as possible. You can pass 
+ *
+ * This routes look complex in the first place, but they try to be as flexible as possible. You can pass
  * all default ids (both MongoDB and for relational databases) and always an optional type (like `json`).
  * With the default resource activated, you can use the following URIs.
- * 
+ *
  * {{{
  * GET /posts or /posts.json => Show a list of available posts
  * GET /posts/1234 or /posts/1234.json => Show the post with the ID 1234
@@ -50,7 +50,7 @@ use lithium\util\String;
  * PUT /posts/1234 or /posts/1234.json => Edit the post with the ID 1234 (has the form data attached)
  * DELETE /posts/1234 or /posts/1234.json => Deletes the post with the ID 1234
  * }}}
- * 
+ *
  */
 class Resource extends \lithium\core\Object {
 
@@ -119,7 +119,7 @@ class Resource extends \lithium\core\Object {
 	 */
 	public static function connect($resource, $options = array()) {
 		$defaults = array(
-			'model' => (string) Libraries::locate('models', $resource), 
+			'model' => (string) Libraries::locate('models', $resource),
 			'type' => 'json',
 			'pluralize' => true,
 			'method' => 'POST',
@@ -127,7 +127,7 @@ class Resource extends \lithium\core\Object {
 		$options += $defaults;
 
 		$resource = Inflector::underscore($resource);
-		
+
 		if($options['pluralize']) {
 			$resource = Inflector::pluralize($resource);
 		}
@@ -142,7 +142,7 @@ class Resource extends \lithium\core\Object {
 		$routes = array();
 		foreach(static::$_types as $action => $params) {
 			$config = array(
-				'template' => String::insert($params['template'], array('resource' => $resource)),
+				'template' => StringDeprecated::insert($params['template'], array('resource' => $resource)),
 				'params' => $params['params'] + array('controller' => $resource, 'action' => $action),
 			);
 
@@ -157,7 +157,7 @@ class Resource extends \lithium\core\Object {
 		foreach($options['model']::$apiMethods as $namespace => $methods) {
 			foreach($methods as $method) {
 				$config = array(
-					'template' => String::insert($actionMethod, array(
+					'template' => StringDeprecated::insert($actionMethod, array(
 						'resource' => $resource,
 						'namespace' => $namespace,
 						'method' => $method)
