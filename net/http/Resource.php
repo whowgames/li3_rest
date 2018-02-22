@@ -52,7 +52,7 @@ use lithium\util\StringDeprecated;
  * }}}
  *
  */
-class Resource extends \lithium\core\Object {
+class Resource extends \lithium\core\DynamicObject {
 
 	/**
 	 * Classes used by `Resource`.
