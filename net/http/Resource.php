@@ -153,7 +153,7 @@ class Resource extends \lithium\core\DynamicObject {
 			$routes[] = new $class($config);
 		}
 
-		$actionMethod = '/{:resource}/{:namespace}/{:method}/{:id:[0-9a-f]{24}|[0-9]+}(.{:type:\w+})*';
+		$actionMethod = '/{:resource}/{:namespace}/{:method}/{:id:[0-9a-f]{24,26}|[0-9]+}(.{:type:\w+})*';
 		foreach($options['model']::$apiMethods as $namespace => $methods) {
 			foreach($methods as $method) {
 				$config = array(
